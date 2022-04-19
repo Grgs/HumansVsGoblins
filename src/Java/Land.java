@@ -6,30 +6,34 @@ import java.util.stream.Collectors;
 
 public class Land {
     ArrayList<ArrayList<String>> grid;
-    Human human;
-    Goblin goblin;
-    public Land(int rows, int columns){
-        human = new Human();
-        goblin = new Goblin();
+
+    public Land(int columns, int rows) {
         grid = new ArrayList<>();
-        String[] emptyRow = new String[rows];
-        Arrays.fill(emptyRow, "  ");
-        for (int i = 0; i <= columns; i ++){
-            grid.add(new ArrayList<>(List.of(emptyRow)));
+        String[] emptyColumns = new String[columns];
+        Arrays.fill(emptyColumns, "  ");
+        for (int i = 0; i <= rows - 1; i++) {
+            grid.add(new ArrayList<>(List.of(emptyColumns)));
         }
-//        grid.get(5).set(5, "X");
-        this.setGrid(2, 3, human.toString());
-        this.setGrid(8, 13, goblin.toString());
     }
 
-    public void setGrid(int row, int column, String value){
+    public void setGrid(int row, int column, String value) {
         grid.get(row).set(column, value);
+    }
+
+    public void setGrid(Player player) {
+        setGrid(player.oldCoordinates.y, player.oldCoordinates.x, "  ");
+        setGrid(player.newCoordinates.y, player.newCoordinates.x, player.toString());
+    }
+
+    public void update(Human human, Goblin goblin) {
+        setGrid(human);
+        setGrid(goblin);
     }
 
     @Override
     public String toString() {
         return grid.stream().map(AbstractCollection::toString).
                 collect(Collectors.toList()).stream().
-                reduce("", (a, b) -> a + "\n" + b).toString();
+                reduce("", (a, b) -> a + "\n" + b);
     }
 }
