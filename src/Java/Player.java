@@ -2,9 +2,13 @@ public class Player {
     Coordinates oldCoordinates;
     Coordinates newCoordinates;
 
-    public Player(int maxX, int maxY) {
-        this.newCoordinates = new Coordinates(maxY, maxX);
-        this.oldCoordinates = new Coordinates(maxY, maxX);
+    public Player(int maxX, int maxY, int x, int y) {
+        this.newCoordinates = new Coordinates(maxY, maxX, x, y);
+        this.oldCoordinates = new Coordinates(maxY, maxX, x, y);
+    }
+
+    public void teleport(Coordinates coordinates) {
+        this.newCoordinates = coordinates;
     }
 
     public void moveNorth() {
