@@ -26,8 +26,8 @@ public class Land {
     }
 
     public void update(Human human, Goblin goblin) {
-        setGrid(human);
         setGrid(goblin);
+        setGrid(human);
     }
 
     @Override

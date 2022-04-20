@@ -2,11 +2,11 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        int maxCols = 16;
-        int maxRows = 9;
+        int maxCols = 4;
+        int maxRows = 3;
         Land land = new Land(maxCols, maxRows);
-        Human human = new Human(maxCols, maxRows, 0, 0);
-        Goblin goblin = new Goblin(maxCols, maxRows, 3, 3);
+        Goblin goblin = new Goblin(maxCols, maxRows, 0, 0);
+        Human human = new Human(maxCols, maxRows, maxCols/2, maxRows/2);
         Scanner scanner = new Scanner(System.in);
 
         land.update(human, goblin);
