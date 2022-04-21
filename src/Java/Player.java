@@ -7,6 +7,8 @@ public class Player {
     int health;
 
 
+    int attack;
+
 
     public Player(int maxX, int maxY, int x, int y) {
         this.newCoordinates = new Coordinates(maxY, maxX, x, y);
@@ -53,4 +55,13 @@ public class Player {
     public void setHealth(int health) {
         this.health = health;
     }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
+
 }
