@@ -5,10 +5,12 @@ public class Main {
         int maxCols = 4;
         int maxRows = 3;
         Land land = new Land(maxCols, maxRows);
-        Goblin goblin = new Goblin(maxCols, maxRows, 0, 0);
+        Goblin goblin = new Goblin(maxCols, maxRows);
+        goblin.setNewCoordinates(0, 0);
         goblin.setHealth(10);
         goblin.setAttack(5);
-        Human human = new Human(maxCols, maxRows, maxCols / 2, maxRows / 2);
+        Human human = new Human(maxCols, maxRows);
+        human.setNewCoordinates(maxCols/2, maxRows/2);
         human.setHealth(10);
         human.setAttack(5);
         Scanner scanner = new Scanner(System.in);
@@ -17,28 +19,7 @@ public class Main {
         System.out.println(land);
 
         for (int i = 0; i <= 5; i++) {
-            char key;
-            try {
-                key = scanner.next().strip().charAt(0);
-            } catch (Exception e) {
-                continue;
-            }
-            switch (key) {
-                case 'w':
-                    human.moveNorth();
-                    break;
-                case 'a':
-                    human.moveWest();
-                    break;
-                case 's':
-                    human.moveSouth();
-                    break;
-                case 'd':
-                    human.moveEast();
-                    break;
-                default:
-                    continue;
-            }
+            if (moveHuman(human, scanner)) continue;
             goblin.moveEast();
             land.update(human, goblin);
             if (Math.abs(human.newCoordinates.x - goblin.newCoordinates.x) +
@@ -51,5 +32,31 @@ public class Main {
             }
             System.out.println(land);
         }
+    }
+
+    private static boolean moveHuman(Human human, Scanner scanner) {
+        char key;
+        try {
+            key = scanner.next().strip().charAt(0);
+        } catch (Exception e) {
+            return true;
+        }
+        switch (key) {
+            case 'w':
+                human.moveNorth();
+                break;
+            case 'a':
+                human.moveWest();
+                break;
+            case 's':
+                human.moveSouth();
+                break;
+            case 'd':
+                human.moveEast();
+                break;
+            default:
+                return true;
+        }
+        return false;
     }
 }
