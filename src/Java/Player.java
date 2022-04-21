@@ -1,6 +1,12 @@
+import java.util.ArrayList;
+
 public class Player {
     Coordinates oldCoordinates;
     Coordinates newCoordinates;
+    ArrayList<Equipment> inventory;
+    int health;
+
+
 
     public Player(int maxX, int maxY, int x, int y) {
         this.newCoordinates = new Coordinates(maxY, maxX, x, y);
@@ -10,6 +16,7 @@ public class Player {
     public void teleport(Coordinates coordinates) {
         this.newCoordinates = coordinates;
     }
+
 
     public void moveNorth() {
         oldCoordinates.setXY(newCoordinates.x, newCoordinates.y);
@@ -29,5 +36,21 @@ public class Player {
     public void moveWest() {
         oldCoordinates.setXY(newCoordinates.x, newCoordinates.y);
         newCoordinates.setXY(newCoordinates.x - 1, newCoordinates.y);
+    }
+
+    public ArrayList<Equipment> getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(ArrayList<Equipment> inventory) {
+        this.inventory = inventory;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 }

@@ -16,7 +16,6 @@ public class Main {
             char key;
             try {
                 key = scanner.next().strip().charAt(0);
-                System.out.println(key);
             } catch (Exception e) {
                 continue;
             }
