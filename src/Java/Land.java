@@ -24,7 +24,7 @@ public class Land {
         return newGrid;
     }
 
-    public ArrayList<ArrayList<String>> emptyGrid(){
+    public ArrayList<ArrayList<String>> emptyGrid() {
         return emptyGrid(this.maxColumns, this.maxRows);
     }
 
@@ -35,8 +35,9 @@ public class Land {
     public void setGrid(Player player) {
         setGrid(player.newCoordinates, player.toString());
     }
-    public void addPlayers(ArrayList<Player> players){
-        for (Player p: players){
+
+    public void addPlayers(ArrayList<Player> players) {
+        for (Player p : players) {
             this.setGrid(p);
         }
     }
