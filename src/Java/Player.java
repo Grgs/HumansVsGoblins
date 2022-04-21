@@ -1,9 +1,7 @@
 import java.util.ArrayList;
 
 public class Player {
-    Coordinates oldCoordinates;
-
-    Coordinates newCoordinates;
+    Coordinates coordinates;
 
     ArrayList<Equipment> inventory;
 
@@ -11,48 +9,42 @@ public class Player {
     int attack;
 
 
-    public Coordinates getNewCoordinates() {
-        return newCoordinates;
-    }
-
     public Player(int maxX, int maxY, int x, int y) {
-        this.newCoordinates = new Coordinates(maxY, maxX, x, y);
-        this.oldCoordinates = new Coordinates(maxY, maxX, x, y);
+        this.coordinates = new Coordinates(maxY, maxX, x, y);
     }
 
     public Player(int maxX, int maxY) {
-        this.newCoordinates = new Coordinates(maxY, maxX, 0, 0);
-        this.oldCoordinates = new Coordinates(maxY, maxX, maxX - 1, maxY - 1);
+        this.coordinates = new Coordinates(maxY, maxX, 0, 0);
+    }
+
+    public Coordinates getCoordinates() {
+        return coordinates;
     }
 
     public void setNewCoordinates(int x, int y) {
-        this.newCoordinates.x = x;
-        this.newCoordinates.y = y;
+        this.coordinates.x = x;
+        this.coordinates.y = y;
     }
 
     public void teleport(Coordinates coordinates) {
-        this.newCoordinates = coordinates;
+        this.coordinates = coordinates;
     }
 
 
     public void moveNorth() {
-        oldCoordinates.setXY(newCoordinates.x, newCoordinates.y);
-        newCoordinates.setXY(newCoordinates.x, newCoordinates.y - 1);
+        coordinates.setXY(coordinates.x, coordinates.y - 1);
     }
 
     public void moveSouth() {
-        oldCoordinates.setXY(newCoordinates.x, newCoordinates.y);
-        newCoordinates.setXY(newCoordinates.x, newCoordinates.y + 1);
+        coordinates.setXY(coordinates.x, coordinates.y + 1);
     }
 
     public void moveEast() {
-        oldCoordinates.setXY(newCoordinates.x, newCoordinates.y);
-        newCoordinates.setXY(newCoordinates.x + 1, newCoordinates.y);
+        coordinates.setXY(coordinates.x + 1, coordinates.y);
     }
 
     public void moveWest() {
-        oldCoordinates.setXY(newCoordinates.x, newCoordinates.y);
-        newCoordinates.setXY(newCoordinates.x - 1, newCoordinates.y);
+        coordinates.setXY(coordinates.x - 1, coordinates.y);
     }
 
     public ArrayList<Equipment> getInventory() {

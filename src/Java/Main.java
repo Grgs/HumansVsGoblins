@@ -1,13 +1,14 @@
+import java.util.Locale;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
-    private static boolean moveHuman(Human human, Scanner scanner) {
+    private static void moveHuman(Human human, Scanner scanner) {
         char key;
         try {
-            key = scanner.next().strip().charAt(0);
+            key = scanner.next().strip().toLowerCase(Locale.ROOT).charAt(0);
         } catch (Exception e) {
-            return true;
+            key = 'n';
         }
         switch (key) {
             case 'w':
@@ -22,10 +23,25 @@ public class Main {
             case 'd':
                 human.moveEast();
                 break;
-            default:
-                return true;
         }
-        return false;
+    }
+
+    private static void moveGoblin(Goblin goblin, Human human) {
+        int xDiff = goblin.getCoordinates().x - human.getCoordinates().x;
+        int yDiff = goblin.getCoordinates().y - human.getCoordinates().y;
+        if (Math.abs(xDiff) > Math.abs(yDiff)) {
+            if (xDiff < 0) {
+                goblin.moveEast();
+            } else {
+                goblin.moveWest();
+            }
+        } else {
+            if (yDiff < 0) {
+                goblin.moveSouth();
+            } else {
+                goblin.moveNorth();
+            }
+        }
     }
 
     private static void combat(Goblin goblin, Human human, Random random) {
@@ -51,17 +67,17 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int maxCols = 3;
-        int maxRows = 3;
+        int maxCols = 5;
+        int maxRows = 5;
         Land land = new Land(maxCols, maxRows);
         Goblin goblin = new Goblin(maxCols, maxRows);
         goblin.setNewCoordinates(0, 0);
-        goblin.setHealth(10);
-        goblin.setAttack(7);
+        goblin.setHealth(15);
+        goblin.setAttack(5);
         Human human = new Human(maxCols, maxRows);
         human.setNewCoordinates(maxCols / 2, maxRows / 2);
-        human.setHealth(10);
-        human.setAttack(7);
+        human.setHealth(15);
+        human.setAttack(5);
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
         GameState gameState = GameState.PLAYING;
@@ -71,14 +87,10 @@ public class Main {
         System.out.println(land);
 
         while (gameState == GameState.PLAYING) {
-            if (moveHuman(human, scanner)) continue;
-            goblin.moveEast();
-            land.update(human, goblin);
-            if (human.newCoordinates.collidesWith(goblin.newCoordinates)) {
+            moveHuman(human, scanner);
+            moveGoblin(goblin, human);
+            if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random);
-            }
-            if (human.newCoordinates.equals(goblin.newCoordinates)) {
-                goblin.moveEast();
             }
             turns--;
             if (human.getHealth() <= 0) {
@@ -88,6 +100,11 @@ public class Main {
             } else if (turns <= 0) {
                 gameState = GameState.DRAW;
             }
+
+            if (human.getCoordinates().equals(goblin.getCoordinates())) {
+                goblin.moveEast();
+            }
+            land.update(human, goblin);
             System.out.println(land);
             printTurnMessage(gameState);
         }

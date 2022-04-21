@@ -33,7 +33,7 @@ public class Land {
     }
 
     public void setGrid(Player player) {
-        setGrid(player.newCoordinates, player.toString());
+        setGrid(player.getCoordinates(), player.toString());
     }
 
     public void addPlayers(ArrayList<Player> players) {
