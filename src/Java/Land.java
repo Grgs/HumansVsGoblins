@@ -6,28 +6,48 @@ import java.util.stream.Collectors;
 
 public class Land {
     ArrayList<ArrayList<String>> grid;
+    int maxColumns, maxRows;
 
-    public Land(int columns, int rows) {
-        grid = new ArrayList<>();
-        String[] emptyColumns = new String[columns];
-        Arrays.fill(emptyColumns, "  ");
-        for (int i = 0; i <= rows - 1; i++) {
-            grid.add(new ArrayList<>(List.of(emptyColumns)));
-        }
+    public Land(int maxColumns, int maxRows) {
+        this.maxColumns = maxColumns;
+        this.maxRows = maxRows;
+        this.grid = emptyGrid();
     }
 
-    public void setGrid(int row, int column, String value) {
-        grid.get(row).set(column, value);
+    public ArrayList<ArrayList<String>> emptyGrid(int maxColumns, int maxRows) {
+        ArrayList<ArrayList<String>> newGrid = new ArrayList<>();
+        String[] emptyColumns = new String[maxColumns];
+        Arrays.fill(emptyColumns, "  ");
+        for (int i = 0; i <= maxRows - 1; i++) {
+            newGrid.add(new ArrayList<>(List.of(emptyColumns)));
+        }
+        return newGrid;
+    }
+
+    public ArrayList<ArrayList<String>> emptyGrid(){
+        return emptyGrid(this.maxColumns, this.maxRows);
+    }
+
+    public void setGrid(Coordinates coordinates, String string) {
+        grid.get(coordinates.y).set(coordinates.x, string);
     }
 
     public void setGrid(Player player) {
-        setGrid(player.oldCoordinates.y, player.oldCoordinates.x, "  ");
-        setGrid(player.newCoordinates.y, player.newCoordinates.x, player.toString());
+        setGrid(player.newCoordinates, player.toString());
+    }
+    public void addPlayers(ArrayList<Player> players){
+        for (Player p: players){
+            this.setGrid(p);
+        }
+    }
+
+    public String getGrid(Coordinates coordinates) {
+        return grid.get(coordinates.y).get(coordinates.x);
     }
 
     public void update(Human human, Goblin goblin) {
-        setGrid(goblin);
-        setGrid(human);
+        this.grid = emptyGrid();
+        addPlayers(new ArrayList<>(List.of(new Player[]{human, goblin})));
     }
 
     @Override
