@@ -1,8 +1,9 @@
+import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        int maxCols = 4;
+        int maxCols = 3;
         int maxRows = 3;
         Land land = new Land(maxCols, maxRows);
         Goblin goblin = new Goblin(maxCols, maxRows);
@@ -10,10 +11,11 @@ public class Main {
         goblin.setHealth(10);
         goblin.setAttack(5);
         Human human = new Human(maxCols, maxRows);
-        human.setNewCoordinates(maxCols/2, maxRows/2);
+        human.setNewCoordinates(maxCols / 2, maxRows / 2);
         human.setHealth(10);
         human.setAttack(5);
         Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
 
         land.update(human, goblin);
         System.out.println(land);
@@ -24,14 +26,18 @@ public class Main {
             land.update(human, goblin);
             if (Math.abs(human.newCoordinates.x - goblin.newCoordinates.x) +
                     Math.abs(human.newCoordinates.y - goblin.newCoordinates.y) < 2) {
-                System.out.println("combat");
-                human.setHealth(human.getHealth() - goblin.getAttack());
-                goblin.setHealth(goblin.getHealth() - human.getAttack());
-                System.out.printf("Human health: %d%nGoblin health: %d%n",
-                        human.getHealth(), goblin.getHealth());
+                combat(goblin, human, random);
             }
             System.out.println(land);
         }
+    }
+
+    private static void combat(Goblin goblin, Human human, Random random) {
+        System.out.println("combat");
+        human.setHealth(human.getHealth() - (int) (goblin.getAttack() * 2 * random.nextGaussian()));
+        goblin.setHealth(goblin.getHealth() - (int) (human.getAttack() * 2 * random.nextGaussian()));
+        System.out.printf("Human health: %d%nGoblin health: %d%n",
+                human.getHealth(), goblin.getHealth());
     }
 
     private static boolean moveHuman(Human human, Scanner scanner) {
