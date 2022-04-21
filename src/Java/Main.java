@@ -83,8 +83,10 @@ public class Main {
         GameState gameState = GameState.PLAYING;
         int turns = 10;
 
+        System.out.printf("Human Vs Goblin%n%sVs%s%n", human, goblin);
         land.update(human, goblin);
         System.out.println(land);
+        System.out.println("type 'w', 'a', 's' or 'd' to move up, left, down or right \nthen press enter:");
 
         while (gameState == GameState.PLAYING) {
             moveHuman(human, scanner);
