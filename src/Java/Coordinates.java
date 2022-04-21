@@ -23,4 +23,10 @@ public class Coordinates {
         }
     }
 
+    public boolean collidesWith(Coordinates coordinates){
+        return (Math.abs(this.x - coordinates.x) + Math.abs(this.y - coordinates.y) < 2);
+    }
+    public boolean equals(Coordinates coordinates) {
+        return this.x == coordinates.x && this.y == coordinates.y;
+    }
 }

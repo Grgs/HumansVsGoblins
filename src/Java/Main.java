@@ -9,33 +9,60 @@ public class Main {
         Goblin goblin = new Goblin(maxCols, maxRows);
         goblin.setNewCoordinates(0, 0);
         goblin.setHealth(10);
-        goblin.setAttack(5);
+        goblin.setAttack(7);
         Human human = new Human(maxCols, maxRows);
         human.setNewCoordinates(maxCols / 2, maxRows / 2);
         human.setHealth(10);
-        human.setAttack(5);
+        human.setAttack(7);
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
+        GameState gameState = GameState.PLAYING;
+        int turns = 10;
 
         land.update(human, goblin);
         System.out.println(land);
 
-        for (int i = 0; i <= 5; i++) {
+        while (gameState == GameState.PLAYING) {
             if (moveHuman(human, scanner)) continue;
             goblin.moveEast();
             land.update(human, goblin);
-            if (Math.abs(human.newCoordinates.x - goblin.newCoordinates.x) +
-                    Math.abs(human.newCoordinates.y - goblin.newCoordinates.y) < 2) {
+            if (human.newCoordinates.collidesWith(goblin.newCoordinates)) {
                 combat(goblin, human, random);
             }
+            if (human.newCoordinates.equals(goblin.newCoordinates)){
+                goblin.moveEast();
+            }
+            turns--;
+            if (human.getHealth() <= 0) {
+                gameState = GameState.LOST;
+            } else if (goblin.getHealth() <= 0) {
+                gameState = GameState.WON;
+            } else if (turns <= 0) {
+                gameState = GameState.DRAW;
+            }
             System.out.println(land);
+            printTurnMessage(gameState);
+        }
+    }
+
+    private static void printTurnMessage(GameState gameState) {
+        switch (gameState) {
+            case WON:
+                System.out.println("You won!");
+                break;
+            case LOST:
+                System.out.println("You lost!");
+                break;
+            case DRAW:
+                System.out.println("You survived!");
+                break;
         }
     }
 
     private static void combat(Goblin goblin, Human human, Random random) {
         System.out.println("combat");
-        human.setHealth(human.getHealth() - (int) (goblin.getAttack() * 2 * random.nextGaussian()));
-        goblin.setHealth(goblin.getHealth() - (int) (human.getAttack() * 2 * random.nextGaussian()));
+        human.setHealth(human.getHealth() - goblin.getAttack() + (int) (2.0 * random.nextGaussian()));
+        goblin.setHealth(goblin.getHealth() - human.getAttack() + (int) (2.0 * random.nextGaussian()));
         System.out.printf("Human health: %d%nGoblin health: %d%n",
                 human.getHealth(), goblin.getHealth());
     }
