@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Land {
-    ArrayList<ArrayList<String>> grid;
+    ArrayList<ArrayList<Tile>> grid;
     int maxColumns, maxRows;
 
     public Land(int maxColumns, int maxRows) {
@@ -14,41 +14,47 @@ public class Land {
         this.grid = emptyGrid();
     }
 
-    public ArrayList<ArrayList<String>> emptyGrid(int maxColumns, int maxRows) {
-        ArrayList<ArrayList<String>> newGrid = new ArrayList<>();
-        String[] emptyColumns = new String[maxColumns];
-        Arrays.fill(emptyColumns, "  ");
+    public ArrayList<ArrayList<Tile>> emptyGrid(int maxColumns, int maxRows) {
+        ArrayList<ArrayList<Tile>> newGrid = new ArrayList<>();
+        Tile[] emptyColumns = new Tile[maxColumns];
+        Arrays.fill(emptyColumns, new Tile());
         for (int i = 0; i <= maxRows - 1; i++) {
             newGrid.add(new ArrayList<>(List.of(emptyColumns)));
         }
         return newGrid;
     }
 
-    public ArrayList<ArrayList<String>> emptyGrid() {
+    public ArrayList<ArrayList<Tile>> emptyGrid() {
         return emptyGrid(this.maxColumns, this.maxRows);
     }
 
-    public void setGrid(Coordinates coordinates, String string) {
-        grid.get(coordinates.y).set(coordinates.x, string);
+    public void setGrid(Coordinates coordinates, Piece piece) {
+        grid.get(coordinates.y).set(coordinates.x, new Tile(piece));
     }
 
-    public void setGrid(Player player) {
-        setGrid(player.getCoordinates(), player.toString());
+    public void setGrid(Piece piece) {
+        setGrid(piece.getCoordinates(), piece);
     }
 
-    public void addPlayers(ArrayList<Player> players) {
-        for (Player p : players) {
+    public void addPieces(ArrayList<Piece> pieces) {
+        for (Piece p : pieces) {
             this.setGrid(p);
         }
     }
+//    public void addPlayers(ArrayList<Player> players) {
+//        for (Player p : players) {
+//            this.setGrid(p);
+//        }
+//    }
 
-    public String getTile(Coordinates coordinates) {
+    public Tile getTile(Coordinates coordinates) {
         return grid.get(coordinates.y).get(coordinates.x);
     }
 
-    public void update(Human human, Goblin goblin) {
+    public void update(ArrayList<Piece> players, ArrayList<Piece> lootList) {
         this.grid = emptyGrid();
-        addPlayers(new ArrayList<>(List.of(new Player[]{human, goblin})));
+        addPieces(lootList);
+        addPieces(players);
     }
 
     @Override

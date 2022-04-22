@@ -1,7 +1,7 @@
 public class Goblin extends Player {
 
-    public Goblin(int maxX, int maxY) {
-        super(maxX, maxY);
+    public Goblin() {
+        super();
     }
 
     @Override

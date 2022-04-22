@@ -1,13 +1,14 @@
-public class Loot {
+public class Loot extends Piece {
     public int attack;
     public int health;
     public int defence;
 
-    public Coordinates coordinates;
-
     public Loot(Coordinates coordinates) {
-        this.coordinates = coordinates;
+        super(coordinates);
     }
 
-
+    @Override
+    public String toString() {
+        return " +";
+    }
 }

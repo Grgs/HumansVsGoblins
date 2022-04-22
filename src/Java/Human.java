@@ -1,7 +1,7 @@
 public class Human extends Player {
 
-    public Human(int maxX, int maxY) {
-        super(maxX, maxY);
+    public Human() {
+        super();
     }
 
     @Override

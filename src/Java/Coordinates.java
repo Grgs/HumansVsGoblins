@@ -4,9 +4,9 @@ public class Coordinates {
     int y;
     int x;
 
-    public Coordinates(int maxY, int maxX, int x, int y) {
-        this.maxY = maxY;
-        this.maxX = maxX;
+    public Coordinates(int x, int y) {
+        this.maxX = MaxCoordinates.maxCols;
+        this.maxY = MaxCoordinates.maxRows;
         this.x = x;
         this.y = y;
     }

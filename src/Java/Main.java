@@ -1,3 +1,5 @@
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class Main {
@@ -64,35 +66,41 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
-        int maxCols = 16;
-        int maxRows = 9;
-        Land land = new Land(maxCols, maxRows);
-        Goblin goblin = new Goblin(maxCols, maxRows);
-        goblin.setNewCoordinates(0, 0);
-        goblin.setHealth(15);
-        goblin.setAttack(5);
-        Human human = new Human(maxCols, maxRows);
-        human.setNewCoordinates(maxCols / 2, maxRows / 2);
-        human.setHealth(15);
-        human.setAttack(5);
+    public static void main(String[] args) throws IOException {
+        FileReader fileReader = new FileReader("game.properties");
+        Properties properties = new Properties();
+        properties.load(fileReader);
+        fileReader.close();
+        MaxCoordinates.maxCols = Integer.parseInt((String) properties.get("maxCols"));
+        MaxCoordinates.maxRows = Integer.parseInt((String) properties.get("maxRows"));
+
+        int maxTurns = Integer.parseInt((String) properties.get("maxTurns"));
+        Land land = new Land(MaxCoordinates.maxCols, MaxCoordinates.maxRows);
+        Goblin goblin = new Goblin();
+        goblin.setCoordinates(0, 0);
+        goblin.setHealth(Integer.parseInt((String) properties.get("initialGoblinHealth")));
+        goblin.setAttack(Integer.parseInt((String) properties.get("initialGoblinAttack")));
+        Human human = new Human();
+        human.setCoordinates(MaxCoordinates.maxCols / 2, MaxCoordinates.maxRows / 2);
+        human.setHealth(Integer.parseInt((String) properties.get("initialHumanHealth")));
+        human.setAttack(Integer.parseInt((String) properties.get("initialHumanAttack")));
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
-        PrimitiveIterator.OfInt randRows = random.ints(Math.max(maxCols, maxRows),
-                0, maxRows).iterator();
-        PrimitiveIterator.OfInt randCols = random.ints(Math.max(maxCols, maxRows),
-                0, maxCols).iterator();
-        ArrayList<Loot> loot = new ArrayList<>();
-        for (int i = 0; i < Math.max(maxCols, maxRows); i++) {
-            Coordinates lootCoordinates = new Coordinates(maxCols, maxRows, randCols.nextInt(),
-                    randRows.nextInt());
-            loot.add(new Loot(lootCoordinates));
+
+        int numberOfLoot = Math.max(MaxCoordinates.maxCols, MaxCoordinates.maxRows);
+        PrimitiveIterator.OfInt randRows = random.ints(numberOfLoot,
+                0, MaxCoordinates.maxRows).iterator();
+        PrimitiveIterator.OfInt randCols = random.ints(numberOfLoot,
+                0, MaxCoordinates.maxCols).iterator();
+        ArrayList<Piece> lootList = new ArrayList<>();
+        for (int i = 0; i < numberOfLoot; i++) {
+            Loot loot = new Loot(new Coordinates(randCols.nextInt(), randRows.nextInt()));
+            lootList.add(loot);
         }
         GameState gameState = GameState.PLAYING;
-        int turns = 10;
 
         System.out.printf("Human Vs Goblin%n%sVs%s%n", human, goblin);
-        land.update(human, goblin);
+        land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
         System.out.println(land);
         System.out.println("type 'w', 'a', 's' or 'd' to move up, left, down or right \nthen press enter:");
 
@@ -102,19 +110,19 @@ public class Main {
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random);
             }
-            turns--;
+            maxTurns--;
             if (human.getHealth() <= 0) {
                 gameState = GameState.LOST;
             } else if (goblin.getHealth() <= 0) {
                 gameState = GameState.WON;
-            } else if (turns <= 0) {
+            } else if (maxTurns <= 0) {
                 gameState = GameState.DRAW;
             }
 
             if (human.getCoordinates().equals(goblin.getCoordinates())) {
                 goblin.moveEast();
             }
-            land.update(human, goblin);
+            land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
             System.out.println(land);
             printTurnMessage(gameState);
         }
