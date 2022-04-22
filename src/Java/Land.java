@@ -42,7 +42,7 @@ public class Land {
         }
     }
 
-    public String getGrid(Coordinates coordinates) {
+    public String getTile(Coordinates coordinates) {
         return grid.get(coordinates.y).get(coordinates.x);
     }
 

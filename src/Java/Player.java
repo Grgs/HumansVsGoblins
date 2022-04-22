@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Player {
     Coordinates coordinates;
 
-    ArrayList<Equipment> inventory;
+    ArrayList<Loot> inventory;
 
     int health;
     int attack;
@@ -47,11 +47,11 @@ public class Player {
         coordinates.setXY(coordinates.x - 1, coordinates.y);
     }
 
-    public ArrayList<Equipment> getInventory() {
+    public ArrayList<Loot> getInventory() {
         return inventory;
     }
 
-    public void setInventory(ArrayList<Equipment> inventory) {
+    public void setInventory(ArrayList<Loot> inventory) {
         this.inventory = inventory;
     }
 

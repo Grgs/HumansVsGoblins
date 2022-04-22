@@ -1,6 +1,4 @@
-import java.util.Locale;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     private static void moveHuman(Human human, Scanner scanner) {
@@ -67,8 +65,8 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        int maxCols = 5;
-        int maxRows = 5;
+        int maxCols = 16;
+        int maxRows = 9;
         Land land = new Land(maxCols, maxRows);
         Goblin goblin = new Goblin(maxCols, maxRows);
         goblin.setNewCoordinates(0, 0);
@@ -80,6 +78,16 @@ public class Main {
         human.setAttack(5);
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
+        PrimitiveIterator.OfInt randRows = random.ints(Math.max(maxCols, maxRows),
+                0, maxRows).iterator();
+        PrimitiveIterator.OfInt randCols = random.ints(Math.max(maxCols, maxRows),
+                0, maxCols).iterator();
+        ArrayList<Loot> loot = new ArrayList<>();
+        for (int i = 0; i < Math.max(maxCols, maxRows); i++) {
+            Coordinates lootCoordinates = new Coordinates(maxCols, maxRows, randCols.nextInt(),
+                    randRows.nextInt());
+            loot.add(new Loot(lootCoordinates));
+        }
         GameState gameState = GameState.PLAYING;
         int turns = 10;
 
