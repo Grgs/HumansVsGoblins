@@ -1,7 +1,6 @@
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
 
@@ -67,29 +66,6 @@ public class Main {
         return lootList;
     }
 
-    public static void absorbLoot(Land land, Human human, ArrayList<Piece> lootList) {
-        List<Piece> capturedLootList = lootList.stream().filter(l -> l.coordinates.
-                equals(human.getCoordinates())).collect(Collectors.toList());
-        if (capturedLootList.size() == 0)
-            return;
-        Loot capturedLoot = (Loot) capturedLootList.get(0);
-        human.inventory.add(capturedLoot);
-        if (capturedLoot.health > 0) {
-            human.setHealth(human.getHealth() + capturedLoot.getHealth());
-            System.out.printf("+%d Health%nHealth is now %d%n", capturedLoot.getHealth(), human.getHealth());
-        }
-        if (capturedLoot.attack > 0) {
-            human.setAttack(human.getAttack() + capturedLoot.getAttack());
-            System.out.printf("+%d Attack%nAttack is now %d%n", capturedLoot.getAttack(), human.getAttack());
-        }
-        if (capturedLoot.defence > 0) {
-            human.setDefence(human.getDefence() + capturedLoot.getDefence());
-            System.out.printf("+%d Defence%nDefence is now %d%n", capturedLoot.getDefence(), human.getDefence());
-        }
-        land.setGrid(human.getCoordinates(), null);
-        lootList.removeIf(l -> l.coordinates.equals(human.getCoordinates()));
-    }
-
     private static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
         if (human.getHealth() <= 0) {
             gameState = GameState.LOST;
@@ -138,8 +114,12 @@ public class Main {
         while (gameState == GameState.PLAYING) {
             human.move(scanner);
             goblin.move(human, turnsLeft);
+            LandLoot landLoot;
             if (land.getGrid(human.getCoordinates()).piece != null) {
-                absorbLoot(land, human, lootList);
+                landLoot = human.absorbLoot(land, lootList);
+                land = landLoot.land;
+                lootList = landLoot.lootList;
+                System.out.println(landLoot.message);
             }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random);
