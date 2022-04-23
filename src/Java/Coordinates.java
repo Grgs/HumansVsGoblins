@@ -24,7 +24,8 @@ public class Coordinates {
     }
 
     public boolean collidesWith(Coordinates coordinates) {
-        return (Math.abs(this.x - coordinates.x) + Math.abs(this.y - coordinates.y) < 2);
+        return (Math.abs(this.x - coordinates.x) + Math.abs(this.y - coordinates.y) < 2) ||
+                (Math.abs(this.x - coordinates.x) == 1 && Math.abs(this.y - coordinates.y) == 1);
     }
 
     public boolean equals(Coordinates coordinates) {

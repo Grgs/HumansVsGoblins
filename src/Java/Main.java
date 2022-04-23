@@ -4,62 +4,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Main {
-    private static void moveHuman(Human human, Scanner scanner) {
-        char key;
-        try {
-            key = scanner.next().strip().toLowerCase(Locale.ROOT).charAt(0);
-        } catch (Exception e) {
-            key = 'n';
-        }
-        switch (key) {
-            case 'w':
-                human.moveNorth();
-                break;
-            case 'a':
-                human.moveWest();
-                break;
-            case 's':
-                human.moveSouth();
-                break;
-            case 'd':
-                human.moveEast();
-                break;
-        }
-    }
 
-    private static void moveGoblin(Goblin goblin, Human human) {
-        int xDiff;
-        int yDiff;
-        do {
-            xDiff = goblin.getCoordinates().x - human.getCoordinates().x;
-            yDiff = goblin.getCoordinates().y - human.getCoordinates().y;
-            if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                if (xDiff < 0) {
-                    goblin.moveEast();
-                } else {
-                    goblin.moveWest();
-                }
-            } else {
-                if (yDiff < 0) {
-                    goblin.moveSouth();
-                } else {
-                    goblin.moveNorth();
-                }
-            }
-        } while (Math.max(Math.abs(xDiff), Math.abs(yDiff)) > 3);
-    }
-
-    private static void combat(Goblin goblin, Human human, Random random) {
+    public static void combat(Goblin goblin, Human human, Random random) {
         System.out.println("combat");
-        human.setHealth(human.getHealth() + Math.min(goblin.getAttack() * -1 +
+        int oldHumanHealth = human.getHealth();
+        int oldGoblinHealth = goblin.getHealth();
+        human.setHealth(oldHumanHealth + Math.min(goblin.getAttack() * -1 +
                 (int) (-2.0 * random.nextGaussian()) + human.getDefence(), 0));
-        goblin.setHealth(goblin.getHealth() + Math.min(human.getAttack() * -1 +
+        goblin.setHealth(oldGoblinHealth + Math.min(human.getAttack() * -1 +
                 (int) (-2.0 * random.nextGaussian()) + goblin.getDefence(), 0));
-        System.out.printf("Human health: %d%nGoblin health: %d%n",
-                human.getHealth(), goblin.getHealth());
+        System.out.printf("%s health has been reduced by %d%n%s health has been reduced by %d%n", human,
+                oldHumanHealth - human.getHealth(), goblin, oldGoblinHealth - goblin.getHealth());
     }
 
-    private static void printEndGameMessage(GameState gameState) {
+    public static void printEndGameMessage(GameState gameState) {
         switch (gameState) {
             case WON:
                 System.out.println("You won!");
@@ -73,7 +31,7 @@ public class Main {
         }
     }
 
-    private static void initializePlayers(Properties properties, Goblin goblin, Human human) {
+    public static void initializePlayers(Properties properties, Goblin goblin, Human human) {
         goblin.setCoordinates(0, 0);
         goblin.setHealth(Integer.parseInt((String) properties.get("initialGoblinHealth")));
         goblin.setAttack(Integer.parseInt((String) properties.get("initialGoblinAttack")));
@@ -82,7 +40,7 @@ public class Main {
         human.setAttack(Integer.parseInt((String) properties.get("initialHumanAttack")));
     }
 
-    private static ArrayList<Piece> getLootList(Random random) {
+    public static ArrayList<Piece> getLootList(Random random) {
         int numberOfLoot = Math.max(MaxCoordinates.maxCols, MaxCoordinates.maxRows);
         PrimitiveIterator.OfInt randRows = random.ints(numberOfLoot,
                 0, MaxCoordinates.maxRows).iterator();
@@ -109,7 +67,7 @@ public class Main {
         return lootList;
     }
 
-    private static void absorbLoot(Land land, Human human, ArrayList<Piece> lootList) {
+    public static void absorbLoot(Land land, Human human, ArrayList<Piece> lootList) {
         List<Piece> capturedLootList = lootList.stream().filter(l -> l.coordinates.
                 equals(human.getCoordinates())).collect(Collectors.toList());
         if (capturedLootList.size() == 0)
@@ -132,6 +90,25 @@ public class Main {
         lootList.removeIf(l -> l.coordinates.equals(human.getCoordinates()));
     }
 
+    private static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
+        if (human.getHealth() <= 0) {
+            gameState = GameState.LOST;
+        } else if (goblin.getHealth() <= 0) {
+            gameState = GameState.WON;
+        } else if (turnsLeft <= 0) {
+            gameState = GameState.DRAW;
+        }
+        return gameState;
+    }
+
+    private static void removeLosingPlayerFromLand(Land land, Goblin goblin, Human human, GameState gameState) {
+        if (gameState.equals(GameState.WON)) {
+            land.setGrid(goblin.getCoordinates(), null);
+        } else if (gameState.equals(GameState.LOST)) {
+            land.setGrid(human.getCoordinates(), null);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         FileReader fileReader = new FileReader("game.properties");
         Properties properties = new Properties();
@@ -141,7 +118,7 @@ public class Main {
         MaxCoordinates.maxCols = Integer.parseInt((String) properties.get("maxCols"));
         MaxCoordinates.maxRows = Integer.parseInt((String) properties.get("maxRows"));
 
-        int maxTurns = Integer.parseInt((String) properties.get("maxTurns"));
+        int turnsLeft = Integer.parseInt((String) properties.get("maxTurns"));
         Land land = new Land(MaxCoordinates.maxCols, MaxCoordinates.maxRows);
         Goblin goblin = new Goblin();
         Human human = new Human();
@@ -159,41 +136,33 @@ public class Main {
         System.out.println("type 'w', 'a', 's' or 'd' to move up, left, down or right \nthen press enter:");
 
         while (gameState == GameState.PLAYING) {
-            moveHuman(human, scanner);
-            moveGoblin(goblin, human);
+            human.move(scanner);
+            goblin.move(human, turnsLeft);
             if (land.getGrid(human.getCoordinates()).piece != null) {
                 absorbLoot(land, human, lootList);
             }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random);
             }
-            maxTurns--;
-            if (human.getHealth() <= 0) {
-                gameState = GameState.LOST;
-            } else if (goblin.getHealth() <= 0) {
-                gameState = GameState.WON;
-            } else if (maxTurns <= 0) {
-                gameState = GameState.DRAW;
-            }
 
             if (human.getCoordinates().equals(goblin.getCoordinates())) {
                 goblin.moveEast();
             }
 
+            turnsLeft--;
+            gameState = determineGameState(turnsLeft, goblin, human, gameState);
+
             System.out.printf("%s: Health = %d\t Attack = %d\t Defence = %d%n", human,
                     human.getHealth(), human.getAttack(), human.getDefence());
             System.out.printf("%s: Health = %d\t Attack = %d\t Defence = %d%n", goblin,
                     goblin.getHealth(), goblin.getAttack(), goblin.getDefence());
+            System.out.printf("%d turns left%n", turnsLeft);
 
             land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
 
-            if (gameState.equals(GameState.WON)) {
-                land.setGrid(goblin.getCoordinates(), null);
-            } else if (gameState.equals(GameState.LOST)) {
-                land.setGrid(human.getCoordinates(), null);
-            }
+            removeLosingPlayerFromLand(land, goblin, human, gameState);
             System.out.println(land);
-            
+
             printEndGameMessage(gameState);
         }
     }
