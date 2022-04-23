@@ -41,11 +41,6 @@ public class Land {
             this.setGrid(p);
         }
     }
-//    public void addPlayers(ArrayList<Player> players) {
-//        for (Player p : players) {
-//            this.setGrid(p);
-//        }
-//    }
 
     public Tile getTile(Coordinates coordinates) {
         return grid.get(coordinates.y).get(coordinates.x);

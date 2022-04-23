@@ -1,5 +1,9 @@
 public class Piece {
     Coordinates coordinates;
+    public int attack;
+    public int health;
+    public int defence;
+
 
     public Piece(Coordinates coordinates) {
         this.coordinates = coordinates;
@@ -38,4 +42,30 @@ public class Piece {
     public String toString() {
         return " P";
     }
+
+    public int getAttack() {
+        return attack;
+    }
+
+    public void setAttack(int attack) {
+        this.attack = attack;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getDefence() {
+        return defence;
+    }
+
+    public void setDefence(int defence) {
+        this.defence = defence;
+    }
+
+
 }

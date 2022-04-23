@@ -1,7 +1,6 @@
 public class Tile {
 
     Piece piece;
-    String display;
 
     public Tile() {
         piece = null;
