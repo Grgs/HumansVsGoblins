@@ -27,21 +27,25 @@ public class Main {
     }
 
     private static void moveGoblin(Goblin goblin, Human human) {
-        int xDiff = goblin.getCoordinates().x - human.getCoordinates().x;
-        int yDiff = goblin.getCoordinates().y - human.getCoordinates().y;
-        if (Math.abs(xDiff) > Math.abs(yDiff)) {
-            if (xDiff < 0) {
-                goblin.moveEast();
+        int xDiff;
+        int yDiff;
+        do {
+            xDiff = goblin.getCoordinates().x - human.getCoordinates().x;
+            yDiff = goblin.getCoordinates().y - human.getCoordinates().y;
+            if (Math.abs(xDiff) > Math.abs(yDiff)) {
+                if (xDiff < 0) {
+                    goblin.moveEast();
+                } else {
+                    goblin.moveWest();
+                }
             } else {
-                goblin.moveWest();
+                if (yDiff < 0) {
+                    goblin.moveSouth();
+                } else {
+                    goblin.moveNorth();
+                }
             }
-        } else {
-            if (yDiff < 0) {
-                goblin.moveSouth();
-            } else {
-                goblin.moveNorth();
-            }
-        }
+        } while (Math.max(Math.abs(xDiff), Math.abs(yDiff)) > 3);
     }
 
     private static void combat(Goblin goblin, Human human, Random random) {
