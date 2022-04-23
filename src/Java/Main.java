@@ -89,7 +89,7 @@ public class Main {
         PrimitiveIterator.OfInt randCols = random.ints(numberOfLoot,
                 0, MaxCoordinates.maxCols).iterator();
         PrimitiveIterator.OfInt randValue = random.ints(numberOfLoot,
-                0, 10).iterator();
+                1, 10).iterator();
         ArrayList<Piece> lootList = new ArrayList<>();
         for (int i = 0; i < numberOfLoot; i++) {
             Loot loot = new Loot(new Coordinates(randCols.nextInt(), randRows.nextInt()));
@@ -101,7 +101,7 @@ public class Main {
                     loot.health = randValue.nextInt();
                     break;
                 case 2:
-                    loot.defence = randValue.nextInt() / 4;
+                    loot.defence = randValue.nextInt() / 2;
                     break;
             }
             lootList.add(loot);
@@ -111,7 +111,7 @@ public class Main {
 
     private static void absorbLoot(Land land, Human human, ArrayList<Piece> lootList) {
         List<Piece> capturedLootList = lootList.stream().filter(l -> l.coordinates.
-                collidesWith(human.getCoordinates())).collect(Collectors.toList());
+                equals(human.getCoordinates())).collect(Collectors.toList());
         if (capturedLootList.size() == 0)
             return;
         Loot capturedLoot = (Loot) capturedLootList.get(0);
@@ -129,7 +129,7 @@ public class Main {
             System.out.printf("+%d Defence%nDefence is now %d%n", capturedLoot.getDefence(), human.getDefence());
         }
         land.setGrid(human.getCoordinates(), null);
-        lootList.removeIf(l -> l.coordinates.collidesWith(human.getCoordinates()));
+        lootList.removeIf(l -> l.coordinates.equals(human.getCoordinates()));
     }
 
     public static void main(String[] args) throws IOException {
