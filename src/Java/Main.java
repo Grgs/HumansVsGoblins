@@ -90,15 +90,14 @@ public class Main {
         Land land = new Land();
         Goblin goblin = new Goblin();
         Human human = new Human();
+        System.out.printf("Human\tVs\tGoblin%n%s\t\tVs\t%s%n", human, goblin);
+
         initializePlayers(properties, goblin, human);
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
 
         ArrayList<Piece> lootList = getLootList(random);
-
         GameState gameState = GameState.PLAYING;
-
-        System.out.printf("Human Vs Goblin%n%sVs%s%n", human, goblin);
         land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
         System.out.println(land);
         System.out.println("type 'q' to quit or\n" +
@@ -113,6 +112,13 @@ public class Main {
             }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random, Float.parseFloat((String) properties.get("combatRandomness")));
+                Loot lootDrop = new Loot(new Coordinates(goblin.getCoordinates()));
+                while (lootDrop.getCoordinates().equals(human.getCoordinates()) ||
+                        lootDrop.getCoordinates().equals(goblin.getCoordinates())) {
+                    lootDrop.moveEast();
+                }
+                lootDrop.setDefence(5);
+                lootList.add(lootDrop);
             }
 
             if (human.getCoordinates().equals(goblin.getCoordinates())) {

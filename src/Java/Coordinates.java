@@ -11,6 +11,13 @@ public class Coordinates {
         this.y = y;
     }
 
+    public Coordinates(Coordinates coordinates) {
+        this.maxX = MaxCoordinates.maxCols;
+        this.maxY = MaxCoordinates.maxRows;
+        this.x = coordinates.x;
+        this.y = coordinates.y;
+    }
+
     public void setXY(int x, int y) {
 
         this.x = x % this.maxX;
