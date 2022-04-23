@@ -51,15 +51,15 @@ public class Main {
 
     private static void combat(Goblin goblin, Human human, Random random) {
         System.out.println("combat");
-        human.setHealth(human.getHealth() - goblin.getAttack() +
-                (int) (2.0 * random.nextGaussian()) - human.getDefence());
-        goblin.setHealth(goblin.getHealth() - human.getAttack() +
-                (int) (2.0 * random.nextGaussian()) - goblin.getAttack());
+        human.setHealth(human.getHealth() + Math.min(goblin.getAttack() * -1 +
+                (int) (-2.0 * random.nextGaussian()) + human.getDefence(), 0));
+        goblin.setHealth(goblin.getHealth() + Math.min(human.getAttack() * -1 +
+                (int) (-2.0 * random.nextGaussian()) + goblin.getDefence(), 0));
         System.out.printf("Human health: %d%nGoblin health: %d%n",
                 human.getHealth(), goblin.getHealth());
     }
 
-    private static void printTurnMessage(GameState gameState) {
+    private static void printEndGameMessage(GameState gameState) {
         switch (gameState) {
             case WON:
                 System.out.println("You won!");
@@ -179,13 +179,22 @@ public class Main {
             if (human.getCoordinates().equals(goblin.getCoordinates())) {
                 goblin.moveEast();
             }
-            land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
-            System.out.printf("%s: Health = %d, Attack = %d and Defence = %d%n", human,
+
+            System.out.printf("%s: Health = %d\t Attack = %d\t Defence = %d%n", human,
                     human.getHealth(), human.getAttack(), human.getDefence());
-            System.out.printf("%s: Health = %d, Attack = %d and Defence = %d%n", goblin,
+            System.out.printf("%s: Health = %d\t Attack = %d\t Defence = %d%n", goblin,
                     goblin.getHealth(), goblin.getAttack(), goblin.getDefence());
+
+            land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
+
+            if (gameState.equals(GameState.WON)) {
+                land.setGrid(goblin.getCoordinates(), null);
+            } else if (gameState.equals(GameState.LOST)) {
+                land.setGrid(human.getCoordinates(), null);
+            }
             System.out.println(land);
-            printTurnMessage(gameState);
+            
+            printEndGameMessage(gameState);
         }
     }
 }
