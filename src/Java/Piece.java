@@ -1,8 +1,8 @@
 public class Piece {
-    Coordinates coordinates;
     public int attack;
     public int health;
     public int defence;
+    Coordinates coordinates;
 
 
     public Piece(Coordinates coordinates) {

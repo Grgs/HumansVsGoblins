@@ -6,10 +6,12 @@ public class Player extends Piece {
 
     public Player(Coordinates coordinates) {
         super(coordinates);
+        inventory = new ArrayList<>();
     }
 
     public Player() {
         super(new Coordinates(0, 0));
+        inventory = new ArrayList<>();
     }
 
 

@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
     private static void moveHuman(Human human, Scanner scanner) {
@@ -50,8 +51,10 @@ public class Main {
 
     private static void combat(Goblin goblin, Human human, Random random) {
         System.out.println("combat");
-        human.setHealth(human.getHealth() - goblin.getAttack() + (int) (2.0 * random.nextGaussian()));
-        goblin.setHealth(goblin.getHealth() - human.getAttack() + (int) (2.0 * random.nextGaussian()));
+        human.setHealth(human.getHealth() - goblin.getAttack() +
+                (int) (2.0 * random.nextGaussian()) - human.getDefence());
+        goblin.setHealth(goblin.getHealth() - human.getAttack() +
+                (int) (2.0 * random.nextGaussian()) - goblin.getAttack());
         System.out.printf("Human health: %d%nGoblin health: %d%n",
                 human.getHealth(), goblin.getHealth());
     }
@@ -98,12 +101,35 @@ public class Main {
                     loot.health = randValue.nextInt();
                     break;
                 case 2:
-                    loot.defence = randValue.nextInt();
+                    loot.defence = randValue.nextInt() / 4;
                     break;
             }
             lootList.add(loot);
         }
         return lootList;
+    }
+
+    private static void absorbLoot(Land land, Human human, ArrayList<Piece> lootList) {
+        List<Piece> capturedLootList = lootList.stream().filter(l -> l.coordinates.
+                collidesWith(human.getCoordinates())).collect(Collectors.toList());
+        if (capturedLootList.size() == 0)
+            return;
+        Loot capturedLoot = (Loot) capturedLootList.get(0);
+        human.inventory.add(capturedLoot);
+        if (capturedLoot.health > 0) {
+            human.setHealth(human.getHealth() + capturedLoot.getHealth());
+            System.out.printf("+%d Health%nHealth is now %d%n", capturedLoot.getHealth(), human.getHealth());
+        }
+        if (capturedLoot.attack > 0) {
+            human.setAttack(human.getAttack() + capturedLoot.getAttack());
+            System.out.printf("+%d Attack%nAttack is now %d%n", capturedLoot.getAttack(), human.getAttack());
+        }
+        if (capturedLoot.defence > 0) {
+            human.setDefence(human.getDefence() + capturedLoot.getDefence());
+            System.out.printf("+%d Defence%nDefence is now %d%n", capturedLoot.getDefence(), human.getDefence());
+        }
+        land.setGrid(human.getCoordinates(), null);
+        lootList.removeIf(l -> l.coordinates.collidesWith(human.getCoordinates()));
     }
 
     public static void main(String[] args) throws IOException {
@@ -135,6 +161,9 @@ public class Main {
         while (gameState == GameState.PLAYING) {
             moveHuman(human, scanner);
             moveGoblin(goblin, human);
+            if (land.getGrid(human.getCoordinates()).piece != null) {
+                absorbLoot(land, human, lootList);
+            }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random);
             }
@@ -151,6 +180,10 @@ public class Main {
                 goblin.moveEast();
             }
             land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
+            System.out.printf("%s: Health = %d, Attack = %d and Defence = %d%n", human,
+                    human.getHealth(), human.getAttack(), human.getDefence());
+            System.out.printf("%s: Health = %d, Attack = %d and Defence = %d%n", goblin,
+                    goblin.getHealth(), goblin.getAttack(), goblin.getDefence());
             System.out.println(land);
             printTurnMessage(gameState);
         }

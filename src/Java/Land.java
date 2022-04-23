@@ -36,14 +36,14 @@ public class Land {
         setGrid(piece.getCoordinates(), piece);
     }
 
+    public Tile getGrid(Coordinates coordinates) {
+        return grid.get(coordinates.y).get(coordinates.x);
+    }
+
     public void addPieces(ArrayList<Piece> pieces) {
         for (Piece p : pieces) {
             this.setGrid(p);
         }
-    }
-
-    public Tile getTile(Coordinates coordinates) {
-        return grid.get(coordinates.y).get(coordinates.x);
     }
 
     public void update(ArrayList<Piece> players, ArrayList<Piece> lootList) {
