@@ -8,9 +8,9 @@ public class Land {
     ArrayList<ArrayList<Tile>> grid;
     int maxColumns, maxRows;
 
-    public Land(int maxColumns, int maxRows) {
-        this.maxColumns = maxColumns;
-        this.maxRows = maxRows;
+    public Land() {
+        this.maxColumns = MaxCoordinates.maxCols;
+        this.maxRows = MaxCoordinates.maxRows;
         this.grid = emptyGrid();
     }
 

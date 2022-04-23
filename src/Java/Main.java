@@ -4,14 +4,14 @@ import java.util.*;
 
 public class Main {
 
-    public static void combat(Goblin goblin, Human human, Random random) {
+    public static void combat(Goblin goblin, Human human, Random random, float randomness) {
         System.out.println("combat");
         int oldHumanHealth = human.getHealth();
         int oldGoblinHealth = goblin.getHealth();
-        human.setHealth(oldHumanHealth + Math.min(goblin.getAttack() * -1 +
-                (int) (-2.0 * random.nextGaussian()) + human.getDefence(), 0));
-        goblin.setHealth(oldGoblinHealth + Math.min(human.getAttack() * -1 +
-                (int) (-2.0 * random.nextGaussian()) + goblin.getDefence(), 0));
+        human.setHealth(oldHumanHealth + Math.min(-goblin.getAttack() -
+                (int) (randomness * random.nextGaussian()) + human.getDefence(), 0));
+        goblin.setHealth(oldGoblinHealth + Math.min(-human.getAttack() -
+                (int) (randomness * random.nextGaussian()) + goblin.getDefence(), 0));
         System.out.printf("%s health has been reduced by %d%n%s health has been reduced by %d%n", human,
                 oldHumanHealth - human.getHealth(), goblin, oldGoblinHealth - goblin.getHealth());
     }
@@ -95,7 +95,7 @@ public class Main {
         MaxCoordinates.maxRows = Integer.parseInt((String) properties.get("maxRows"));
 
         int turnsLeft = Integer.parseInt((String) properties.get("maxTurns"));
-        Land land = new Land(MaxCoordinates.maxCols, MaxCoordinates.maxRows);
+        Land land = new Land();
         Goblin goblin = new Goblin();
         Human human = new Human();
         initializePlayers(properties, goblin, human);
@@ -122,7 +122,7 @@ public class Main {
                 System.out.println(landLoot.message);
             }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
-                combat(goblin, human, random);
+                combat(goblin, human, random, Float.parseFloat((String) properties.get("combatRandomness")));
             }
 
             if (human.getCoordinates().equals(goblin.getCoordinates())) {

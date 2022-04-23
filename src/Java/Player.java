@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 
 public class Player extends Piece {
+    /*Player represents playable and non-playable characters. Currently, that is Human and Goblin.*/
     ArrayList<Loot> inventory;
 
 

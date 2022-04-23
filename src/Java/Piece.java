@@ -1,4 +1,6 @@
 public class Piece {
+    /*Piece represents a piece that can be added to Land. This can be playable or non-playable
+     * characters, or pieces of loot.*/
     public int attack;
     public int health;
     public int defence;
