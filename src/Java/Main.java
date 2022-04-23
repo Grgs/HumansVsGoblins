@@ -4,32 +4,6 @@ import java.util.*;
 
 public class Main {
 
-    public static void combat(Goblin goblin, Human human, Random random, float randomness) {
-        System.out.println("combat");
-        int oldHumanHealth = human.getHealth();
-        int oldGoblinHealth = goblin.getHealth();
-        human.setHealth(oldHumanHealth + Math.min(-goblin.getAttack() -
-                (int) (randomness * random.nextGaussian()) + human.getDefence(), 0));
-        goblin.setHealth(oldGoblinHealth + Math.min(-human.getAttack() -
-                (int) (randomness * random.nextGaussian()) + goblin.getDefence(), 0));
-        System.out.printf("%s health has been reduced by %d%n%s health has been reduced by %d%n", human,
-                oldHumanHealth - human.getHealth(), goblin, oldGoblinHealth - goblin.getHealth());
-    }
-
-    public static void printEndGameMessage(GameState gameState) {
-        switch (gameState) {
-            case WON:
-                System.out.println("You won!");
-                break;
-            case LOST:
-                System.out.println("You lost!");
-                break;
-            case DRAW:
-                System.out.println("You survived!");
-                break;
-        }
-    }
-
     public static void initializePlayers(Properties properties, Goblin goblin, Human human) {
         goblin.setCoordinates(0, 0);
         goblin.setHealth(Integer.parseInt((String) properties.get("initialGoblinHealth")));
@@ -66,6 +40,18 @@ public class Main {
         return lootList;
     }
 
+    public static void combat(Goblin goblin, Human human, Random random, float randomness) {
+        System.out.println("combat");
+        int oldHumanHealth = human.getHealth();
+        int oldGoblinHealth = goblin.getHealth();
+        human.setHealth(oldHumanHealth + Math.min(-goblin.getAttack() -
+                (int) (randomness * random.nextGaussian()) + human.getDefence(), 0));
+        goblin.setHealth(oldGoblinHealth + Math.min(-human.getAttack() -
+                (int) (randomness * random.nextGaussian()) + goblin.getDefence(), 0));
+        System.out.printf("%s health has been reduced by %d%n%s health has been reduced by %d%n", human,
+                oldHumanHealth - human.getHealth(), goblin, oldGoblinHealth - goblin.getHealth());
+    }
+
     private static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
         if (human.getHealth() <= 0) {
             gameState = GameState.LOST;
@@ -77,11 +63,17 @@ public class Main {
         return gameState;
     }
 
-    private static void removeLosingPlayerFromLand(Land land, Goblin goblin, Human human, GameState gameState) {
-        if (gameState.equals(GameState.WON)) {
-            land.setGrid(goblin.getCoordinates(), null);
-        } else if (gameState.equals(GameState.LOST)) {
-            land.setGrid(human.getCoordinates(), null);
+    public static void printEndGameMessage(GameState gameState) {
+        switch (gameState) {
+            case WON:
+                System.out.println("You won!");
+                break;
+            case LOST:
+                System.out.println("You lost!");
+                break;
+            case DRAW:
+                System.out.println("You survived!");
+                break;
         }
     }
 
@@ -109,17 +101,15 @@ public class Main {
         System.out.printf("Human Vs Goblin%n%sVs%s%n", human, goblin);
         land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
         System.out.println(land);
-        System.out.println("type 'w', 'a', 's' or 'd' to move up, left, down or right \nthen press enter:");
+        System.out.println("type 'q' to quit or\n" +
+                "type 'w', 'a', 's' or 'd' to move up, left, down or right \nthen press enter:");
 
         while (gameState == GameState.PLAYING) {
             human.move(scanner);
             goblin.move(human, turnsLeft);
-            LandLoot landLoot;
             if (land.getGrid(human.getCoordinates()).piece != null) {
-                landLoot = human.absorbLoot(land, lootList);
-                land = landLoot.land;
-                lootList = landLoot.lootList;
-                System.out.println(landLoot.message);
+                lootList = human.absorbLoot(lootList);
+                land.setGrid(human.getCoordinates(), null);
             }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
                 combat(goblin, human, random, Float.parseFloat((String) properties.get("combatRandomness")));
@@ -140,7 +130,7 @@ public class Main {
 
             land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
 
-            removeLosingPlayerFromLand(land, goblin, human, gameState);
+            land.removeLosingPlayerFromLand(goblin, human, gameState);
             System.out.println(land);
 
             printEndGameMessage(gameState);

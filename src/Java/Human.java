@@ -30,32 +30,35 @@ public class Human extends Player {
             case 'd':
                 this.moveEast();
                 break;
+            case 'q':
+                System.out.println("Quitting!");
+                System.exit(0);
+            default:
+                System.out.println("Move key not recognized. Turn skipped.");
         }
     }
 
-    public LandLoot absorbLoot(Land land, ArrayList<Piece> lootList) {
-        String message = "";
+    public ArrayList<Piece> absorbLoot(ArrayList<Piece> lootList) {
         List<Piece> capturedLootList = lootList.stream().filter(l -> l.coordinates.
                 equals(this.getCoordinates())).collect(Collectors.toList());
         if (capturedLootList.size() == 0)
-            return new LandLoot(land, lootList, message);
+            return lootList;
         Loot capturedLoot = (Loot) capturedLootList.get(0);
         this.inventory.add(capturedLoot);
         if (capturedLoot.health > 0) {
             this.setHealth(this.getHealth() + capturedLoot.getHealth());
-            message = String.format("+%d Health%nHealth is now %d%n", capturedLoot.getHealth(), this.getHealth());
+            System.out.printf("+%d Health%nHealth is now %d%n", capturedLoot.getHealth(), this.getHealth());
         }
         if (capturedLoot.attack > 0) {
             this.setAttack(this.getAttack() + capturedLoot.getAttack());
-            message = String.format("+%d Attack%nAttack is now %d%n", capturedLoot.getAttack(), this.getAttack());
+            System.out.printf("+%d Attack%nAttack is now %d%n", capturedLoot.getAttack(), this.getAttack());
         }
         if (capturedLoot.defence > 0) {
             this.setDefence(this.getDefence() + capturedLoot.getDefence());
-            message = String.format("+%d Defence%nDefence is now %d%n", capturedLoot.getDefence(), this.getDefence());
+            System.out.printf("+%d Defence%nDefence is now %d%n", capturedLoot.getDefence(), this.getDefence());
         }
-        land.setGrid(this.getCoordinates(), null);
         lootList.removeIf(l -> l.coordinates.equals(this.getCoordinates()));
-        return new LandLoot(land, lootList, message);
+        return lootList;
     }
 
     @Override

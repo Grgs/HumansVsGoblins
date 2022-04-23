@@ -52,6 +52,14 @@ public class Land {
         addPieces(players);
     }
 
+    public void removeLosingPlayerFromLand(Goblin goblin, Human human, GameState gameState) {
+        if (gameState.equals(GameState.WON)) {
+            this.setGrid(goblin.getCoordinates(), null);
+        } else if (gameState.equals(GameState.LOST)) {
+            this.setGrid(human.getCoordinates(), null);
+        }
+    }
+
     @Override
     public String toString() {
         return grid.stream().map(AbstractCollection::toString).
