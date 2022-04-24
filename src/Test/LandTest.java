@@ -29,6 +29,8 @@ class LandTest {
     void emptyGrid() {
         assertEquals(30, land.grid.size());
         assertEquals(20, land.grid.get(0).size());
+        Set<Tile> gridSet = land.grid.stream().flatMap(Collection::stream).collect(Collectors.toSet());
+        assertEquals(1, gridSet.size());
     }
 
     @Test
