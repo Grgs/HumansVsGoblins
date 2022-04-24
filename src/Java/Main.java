@@ -52,7 +52,7 @@ public class Main {
                 oldHumanHealth - human.getHealth(), goblin, oldGoblinHealth - goblin.getHealth());
     }
 
-    private static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
+    public static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
         if (human.getHealth() <= 0) {
             gameState = GameState.LOST;
         } else if (goblin.getHealth() <= 0) {
