@@ -14,18 +14,14 @@ public class Land {
         this.grid = emptyGrid();
     }
 
-    public ArrayList<ArrayList<Tile>> emptyGrid(int maxColumns, int maxRows) {
+    public ArrayList<ArrayList<Tile>> emptyGrid() {
         ArrayList<ArrayList<Tile>> newGrid = new ArrayList<>();
-        Tile[] emptyColumns = new Tile[maxColumns];
+        Tile[] emptyColumns = new Tile[this.maxColumns];
         Arrays.fill(emptyColumns, new Tile());
-        for (int i = 0; i <= maxRows - 1; i++) {
+        for (int i = 0; i <= this.maxRows - 1; i++) {
             newGrid.add(new ArrayList<>(List.of(emptyColumns)));
         }
         return newGrid;
-    }
-
-    public ArrayList<ArrayList<Tile>> emptyGrid() {
-        return emptyGrid(this.maxColumns, this.maxRows);
     }
 
     public void setGrid(Coordinates coordinates, Piece piece) {
