@@ -1,7 +1,22 @@
+import java.util.Random;
+
 public class Goblin extends Player {
 
     public Goblin() {
         super();
+    }
+
+    public Human combat(Human human, Random random, float randomness) {
+        System.out.println("combat");
+        int oldHumanHealth = human.getHealth();
+        int oldGoblinHealth = this.getHealth();
+        human.setHealth(oldHumanHealth + Math.min(-this.getAttack() -
+                (int) (randomness * random.nextGaussian()) + human.getDefence(), 0));
+        this.setHealth(oldGoblinHealth + Math.min(-human.getAttack() -
+                (int) (randomness * random.nextGaussian()) + this.getDefence(), 0));
+        System.out.printf("%s health has been reduced by %d%n%s health has been reduced by %d%n", human,
+                oldHumanHealth - human.getHealth(), this, oldGoblinHealth - this.getHealth());
+        return human;
     }
 
     public void move(Human human, int maxTurn) {

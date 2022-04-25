@@ -54,11 +54,11 @@ class MainTest {
 
     @Test
     void combat() {
-        assertDoesNotThrow(() -> Main.combat(goblin, human, random, 1.5F));
+        assertDoesNotThrow(() -> goblin.combat(human, random, 1.5F));
         goblin.setAttack(10);
         human.setAttack(10);
         int initialHumanHealth = human.getHealth();
-        Main.combat(goblin, human, random, 0F);
+        human = goblin.combat(human, random, 0F);
         assertTrue(initialHumanHealth > human.getHealth());
     }
 

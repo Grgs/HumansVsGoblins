@@ -40,18 +40,6 @@ public class Main {
         return lootList;
     }
 
-    public static void combat(Goblin goblin, Human human, Random random, float randomness) {
-        System.out.println("combat");
-        int oldHumanHealth = human.getHealth();
-        int oldGoblinHealth = goblin.getHealth();
-        human.setHealth(oldHumanHealth + Math.min(-goblin.getAttack() -
-                (int) (randomness * random.nextGaussian()) + human.getDefence(), 0));
-        goblin.setHealth(oldGoblinHealth + Math.min(-human.getAttack() -
-                (int) (randomness * random.nextGaussian()) + goblin.getDefence(), 0));
-        System.out.printf("%s health has been reduced by %d%n%s health has been reduced by %d%n", human,
-                oldHumanHealth - human.getHealth(), goblin, oldGoblinHealth - goblin.getHealth());
-    }
-
     public static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
         if (human.getHealth() <= 0) {
             gameState = GameState.LOST;
@@ -111,7 +99,7 @@ public class Main {
                 land.setGrid(human.getCoordinates(), null);
             }
             if (human.getCoordinates().collidesWith(goblin.getCoordinates())) {
-                combat(goblin, human, random, Float.parseFloat((String) properties.get("combatRandomness")));
+                human = goblin.combat(human, random, Float.parseFloat((String) properties.get("combatRandomness")));
                 Loot lootDrop = new Loot(new Coordinates(goblin.getCoordinates()));
                 while (lootDrop.getCoordinates().equals(human.getCoordinates()) ||
                         lootDrop.getCoordinates().equals(goblin.getCoordinates())) {
