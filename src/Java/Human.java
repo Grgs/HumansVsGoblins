@@ -8,6 +8,7 @@ public class Human extends Player {
 
     public Human() {
         super();
+        this.shape = "\uD83D\uDC64"; //👤
     }
 
     public void move(Scanner scanner) {
@@ -61,8 +62,4 @@ public class Human extends Player {
         return lootList;
     }
 
-    @Override
-    public String toString() {
-        return "\uD83D\uDC64"; //👤
-    }
 }

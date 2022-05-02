@@ -4,11 +4,13 @@ public class Piece {
     public int attack;
     public int health;
     public int defence;
+    public String shape;
     Coordinates coordinates;
 
 
     public Piece(Coordinates coordinates) {
         this.coordinates = coordinates;
+        this.shape = " P";
     }
 
     public Coordinates getCoordinates() {
@@ -42,7 +44,7 @@ public class Piece {
 
     @Override
     public String toString() {
-        return " P";
+        return this.shape;
     }
 
     public int getAttack() {

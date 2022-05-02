@@ -14,7 +14,7 @@ class HumanTest {
         MaxCoordinates.maxRows = 100;
         Human human = new Human();
         Random random = new Random();
-        ArrayList<Piece> lootList = Main.getLootList(random);
+        ArrayList<Piece> lootList = Loot.getLootList(random);
         int originalLootListSize = lootList.size();
         human.setCoordinates(lootList.get(0).coordinates);
         lootList = human.absorbLoot(lootList);

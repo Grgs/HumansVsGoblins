@@ -46,7 +46,7 @@ class MainTest {
 
     @Test
     void getLootList() {
-        ArrayList<Piece> lootList = Main.getLootList(random);
+        ArrayList<Piece> lootList = Loot.getLootList(random);
         assertNotNull(lootList);
         assertNotEquals(0, lootList.size());
         assertTrue(lootList.size() < (MaxCoordinates.maxRows * MaxCoordinates.maxCols));

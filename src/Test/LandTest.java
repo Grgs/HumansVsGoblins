@@ -58,26 +58,26 @@ class LandTest {
         assertEquals(4, gridSet.size());
     }
 
-    @Test
-    void removeLosingPlayerFromLand() {
-        human.setCoordinates(1, 2);
-        goblin.setCoordinates(2, 3);
-        Loot loot = new Loot(new Coordinates(3, 4));
-        land.update(new ArrayList<>(List.of(new Player[]{human, goblin})),
-                new ArrayList<>(List.of(new Loot[]{loot})));
-        GameState gameState = GameState.WON;
-        land.removeLosingPlayerFromLand(goblin, human, gameState);
-        assertEquals(human.toString(), land.getGrid(new Coordinates(1, 2)).toString());
-        assertNotEquals(goblin.toString(), land.getGrid(new Coordinates(2, 3)).toString());
-
-        human.setCoordinates(1, 2);
-        goblin.setCoordinates(2, 3);
-        loot = new Loot(new Coordinates(3, 4));
-        land.update(new ArrayList<>(List.of(new Player[]{human, goblin})),
-                new ArrayList<>(List.of(new Loot[]{loot})));
-        gameState = GameState.LOST;
-        land.removeLosingPlayerFromLand(goblin, human, gameState);
-        assertNotEquals(human.toString(), land.getGrid(new Coordinates(1, 2)).toString());
-        assertEquals(goblin.toString(), land.getGrid(new Coordinates(2, 3)).toString());
-    }
+//    @Test
+//    void removeLosingPlayerFromLand() {
+//        human.setCoordinates(1, 2);
+//        goblin.setCoordinates(2, 3);
+//        Loot loot = new Loot(new Coordinates(3, 4));
+//        land.update(new ArrayList<>(List.of(new Player[]{human, goblin})),
+//                new ArrayList<>(List.of(new Loot[]{loot})));
+//        GameState gameState = GameState.WON;
+//        land.removeLosingPlayerFromLand(goblin, human, gameState);
+//        assertEquals(human.toString(), land.getGrid(new Coordinates(1, 2)).toString());
+//        assertNotEquals(goblin.toString(), land.getGrid(new Coordinates(2, 3)).toString());
+//
+//        human.setCoordinates(1, 2);
+//        goblin.setCoordinates(2, 3);
+//        loot = new Loot(new Coordinates(3, 4));
+//        land.update(new ArrayList<>(List.of(new Player[]{human, goblin})),
+//                new ArrayList<>(List.of(new Loot[]{loot})));
+//        gameState = GameState.LOST;
+//        land.removeLosingPlayerFromLand(goblin, human, gameState);
+//        assertNotEquals(human.toString(), land.getGrid(new Coordinates(1, 2)).toString());
+//        assertEquals(goblin.toString(), land.getGrid(new Coordinates(2, 3)).toString());
+//    }
 }

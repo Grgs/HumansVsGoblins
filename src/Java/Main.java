@@ -3,6 +3,13 @@ import java.io.IOException;
 import java.util.*;
 
 public class Main {
+    private static Properties getProperties() throws IOException {
+        FileReader fileReader = new FileReader("game.properties");
+        Properties properties = new Properties();
+        properties.load(fileReader);
+        fileReader.close();
+        return properties;
+    }
 
     public static void initializePlayers(Properties properties, Goblin goblin, Human human) {
         goblin.setCoordinates(0, 0);
@@ -11,33 +18,6 @@ public class Main {
         human.setCoordinates(MaxCoordinates.maxCols / 2, MaxCoordinates.maxRows / 2);
         human.setHealth(Integer.parseInt((String) properties.get("initialHumanHealth")));
         human.setAttack(Integer.parseInt((String) properties.get("initialHumanAttack")));
-    }
-
-    public static ArrayList<Piece> getLootList(Random random) {
-        int numberOfLoot = Math.max(MaxCoordinates.maxCols, MaxCoordinates.maxRows);
-        PrimitiveIterator.OfInt randRows = random.ints(numberOfLoot,
-                0, MaxCoordinates.maxRows).iterator();
-        PrimitiveIterator.OfInt randCols = random.ints(numberOfLoot,
-                0, MaxCoordinates.maxCols).iterator();
-        PrimitiveIterator.OfInt randValue = random.ints(numberOfLoot,
-                1, 10).iterator();
-        ArrayList<Piece> lootList = new ArrayList<>();
-        for (int i = 0; i < numberOfLoot; i++) {
-            Loot loot = new Loot(new Coordinates(randCols.nextInt(), randRows.nextInt()));
-            switch (i % 3) {
-                case 0:
-                    loot.attack = randValue.nextInt();
-                    break;
-                case 1:
-                    loot.health = randValue.nextInt();
-                    break;
-                case 2:
-                    loot.defence = randValue.nextInt() / 2;
-                    break;
-            }
-            lootList.add(loot);
-        }
-        return lootList;
     }
 
     public static GameState determineGameState(int turnsLeft, Goblin goblin, Human human, GameState gameState) {
@@ -66,27 +46,25 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        FileReader fileReader = new FileReader("game.properties");
-        Properties properties = new Properties();
-        properties.load(fileReader);
-        fileReader.close();
-
+        Properties properties = getProperties();
         MaxCoordinates.maxCols = Integer.parseInt((String) properties.get("maxCols"));
         MaxCoordinates.maxRows = Integer.parseInt((String) properties.get("maxRows"));
-
         int turnsLeft = Integer.parseInt((String) properties.get("maxTurns"));
+
         Land land = new Land();
         Goblin goblin = new Goblin();
         Human human = new Human();
-        System.out.printf("Human\tVs\tGoblin%n%s\t\tVs\t%s%n", human, goblin);
-
-        initializePlayers(properties, goblin, human);
         Scanner scanner = new Scanner(System.in);
         Random random = new Random();
 
-        ArrayList<Piece> lootList = getLootList(random);
+        initializePlayers(properties, goblin, human);
+
+        ArrayList<Piece> lootList = Loot.getLootList(random);
         GameState gameState = GameState.PLAYING;
+
+        System.out.printf("Human\tVs\tGoblin%n%s\t\tVs\t%s%n", human, goblin);
         land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
+
         System.out.println(land);
         System.out.println("type 'q' to quit or\n" +
                 "type 'w', 'a', 's' or 'd' to move up, left, down or right \nthen press enter:");
@@ -122,9 +100,13 @@ public class Main {
                     goblin.getHealth(), goblin.getAttack(), goblin.getDefence());
             System.out.printf("%d turns left%n", turnsLeft);
 
-            land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
+            if (gameState.equals(GameState.WON)) {
+                goblin.shape = "  ";
+            } else if (gameState.equals(GameState.LOST)) {
+                human.shape = "  ";
+            }
 
-            land.removeLosingPlayerFromLand(goblin, human, gameState);
+            land.update(new ArrayList<>(List.of(new Player[]{human, goblin})), lootList);
             System.out.println(land);
 
             printEndGameMessage(gameState);

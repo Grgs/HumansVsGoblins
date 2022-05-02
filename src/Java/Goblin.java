@@ -4,6 +4,7 @@ public class Goblin extends Player {
 
     public Goblin() {
         super();
+        this.shape = "\uD83D\uDC7A"; //👺
     }
 
     public Human combat(Human human, Random random, float randomness) {
@@ -52,8 +53,4 @@ public class Goblin extends Player {
         } while (Math.max(Math.abs(xDiff), Math.abs(yDiff)) > Math.max(maxTurn, 2));
     }
 
-    @Override
-    public String toString() {
-        return "\uD83D\uDC7A"; //👺
-    }
 }
